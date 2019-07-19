@@ -2,16 +2,103 @@ package System;
 import java.io.*;
 import java.sql.*;
 import java.util.TimeZone;
+import java.util.Timer;
 
 public class PickerRunner {
-    public static void main(String args[]) throws ClassNotFoundException, SQLException, FileNotFoundException, IOException {
+    public static void main(String args[]) throws ClassNotFoundException, SQLException, FileNotFoundException, IOException
+    {
+        populateAll();
+    }
+    public static void populateAll() throws ClassNotFoundException, SQLException, FileNotFoundException, IOException
+    {
+        long start = 0;
+        long finish = 0;
+        long total = 0;
+        System.out.println("Starting connection...");
+        System.out.println("Creating and Populating movie table...");
+        start = System.currentTimeMillis();
         populateMovies();
+        finish = System.currentTimeMillis();
+        total += (finish-start);
+        System.out.println("Populating Movie table done in "+(finish-start)/1000.00+" seconds.");
+        System.out.println("Populating Movie Director table.");
+        start = System.currentTimeMillis();
         populateMovieDirectors();
+        finish = System.currentTimeMillis();
+        total += (finish-start);
+        System.out.println("Populating Movie Director table done in "+(finish-start)/1000.00+" seconds.");
+        System.out.println("Populating Tag table.");
+        start = System.currentTimeMillis();
         populateTags();
+        finish = System.currentTimeMillis();
+        total += (finish-start);
+        System.out.println("Populating Tag table done in "+(finish-start)/1000.00+" seconds.");
+        System.out.println("Populating Movie Tags table.");
+        start = System.currentTimeMillis();
         populateMovieTags();
+        finish = System.currentTimeMillis();
+        total += (finish-start);
+        System.out.println("Populating Movie Tag table done in "+(finish-start)/1000.00+" seconds.");
+        System.out.println("Populating Movie Genre table.");
+        start = System.currentTimeMillis();
         populateMovieGenres();
+        finish = System.currentTimeMillis();
+        total += (finish-start);
+        System.out.println("Populating Movie Genre table done in "+(finish-start)/1000.00+" seconds.");
+        System.out.println("Populating Movie Actor table.");
+        start = System.currentTimeMillis();
         populateMovieActors();
-
+        finish = System.currentTimeMillis();
+        total += (finish-start);
+        System.out.println("Populating Movie Actor table done in "+(finish-start)/1000.00+" seconds.");
+        System.out.println("Populating User Ratings table.");
+        start = System.currentTimeMillis();
+        populateUserRatings();
+        finish = System.currentTimeMillis();
+        total += (finish-start);
+        System.out.println("Populating User Ratings table done in "+(finish-start)/1000.00+" seconds.");
+        System.out.println("Total time for import and creation "+total/1000.00+" seconds.");
+        System.out.println("Closing connection.");
+    }
+    public static void populateUserRatings() throws ClassNotFoundException, SQLException, FileNotFoundException, IOException
+    {
+        BufferedReader br = new BufferedReader(new FileReader("Rotten Tomatos Dataset/user_ratedmovies.dat"));
+        Class.forName("com.mysql.cj.jdbc.Driver");
+        Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/Movie_Matcher?serverTimezone="
+                + TimeZone.getDefault().getID(),"root", "assassass1");
+        Statement makeTable = con.createStatement();
+        String createMovieActorTable = "CREATE TABLE MOVIE_USER_RATINGS" +
+                "(userId int not null,"+
+                "movieId int,"+
+                "rating double,"+
+                "dateDay int,"+
+                "dateMonth int,"+
+                "dateYear int,"+
+                "dateHour int,"+
+                "dateMinute int,"+
+                "dateSecond int,"+
+                "foreign key (movieId) references Movie(id))";
+        makeTable.executeUpdate(createMovieActorTable);
+        makeTable.close();
+        PreparedStatement insertMovieUserRating = con.prepareStatement("INSERT INTO MOVIE_USER_RATINGS (userId,movieId, " +
+                "rating, dateDay, dateMonth, dateYear, dateHour, dateMinute, dateSecond)"+
+                "VALUES (?, ?, ?, ?, ? ,? ,? ,? ,?)");
+        String line;
+        br.readLine();
+        while ((line = br.readLine()) != null) {
+            String[] tokens = line.split("\t");
+            insertMovieUserRating.setInt(1, Integer.parseInt(tokens[0]));
+            insertMovieUserRating.setInt(2, Integer.parseInt(tokens[1]));
+            insertMovieUserRating.setDouble(3, Double.parseDouble(tokens[2]));
+            insertMovieUserRating.setInt(4, Integer.parseInt(tokens[3]));
+            insertMovieUserRating.setInt(5, Integer.parseInt(tokens[4]));
+            insertMovieUserRating.setInt(6, Integer.parseInt(tokens[5]));
+            insertMovieUserRating.setInt(7, Integer.parseInt(tokens[6]));
+            insertMovieUserRating.setInt(8, Integer.parseInt(tokens[7]));
+            insertMovieUserRating.setInt(9, Integer.parseInt(tokens[8]));
+            insertMovieUserRating.executeUpdate();
+        }
+        insertMovieUserRating.close();
     }
     public static void populateMovieActors() throws ClassNotFoundException, SQLException, FileNotFoundException, IOException
     {
