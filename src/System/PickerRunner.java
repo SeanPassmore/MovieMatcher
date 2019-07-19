@@ -7,9 +7,109 @@ public class PickerRunner {
     public static void main(String args[]) throws ClassNotFoundException, SQLException, FileNotFoundException, IOException {
         populateMovies();
         populateMovieDirectors();
-        populateMovieTags();
         populateTags();
+        populateMovieTags();
+        populateMovieGenres();
+        populateMovieActors();
+
     }
+    public static void populateMovieActors() throws ClassNotFoundException, SQLException, FileNotFoundException, IOException
+    {
+        BufferedReader br = new BufferedReader(new FileReader("Rotten Tomatos Dataset/movie_actors.dat"));
+        Class.forName("com.mysql.cj.jdbc.Driver");
+        Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/Movie_Matcher?serverTimezone="
+                + TimeZone.getDefault().getID(),"root", "assassass1");
+        Statement makeTable = con.createStatement();
+        String createMovieActorTable = "CREATE TABLE MOVIE_ACTOR" +
+                "(movieId int not null,"+
+                "actorId varchar(90),"+
+                "actorName varchar(90),"+
+                "ranking int,"+
+                "foreign key (movieId) references Movie(id))";
+        makeTable.executeUpdate(createMovieActorTable);
+        makeTable.close();
+        PreparedStatement insertMovieActorList = con.prepareStatement("INSERT INTO MOVIE_ACTOR (movieId, actorId, actorName, ranking)"+
+                "VALUES (?, ?, ?, ?)");
+        br.readLine();
+        String line;
+        int movieId;
+        String actorName;
+        String actorId;
+        int ranking;
+        while ((line = br.readLine()) != null) {
+            String[] tokens = line.split("\t");
+            movieId = Integer.parseInt(tokens[0]);
+            actorId = tokens[1];
+            actorName = tokens[2];
+            ranking = Integer.parseInt(tokens[3]);
+            insertMovieActorList.setInt(1,movieId);
+            insertMovieActorList.setString(2,actorId);
+            insertMovieActorList.setString(3,actorName);
+            insertMovieActorList.setInt(4,ranking);
+            insertMovieActorList.executeUpdate();
+        }
+        insertMovieActorList.close();
+    }
+    public static void populateMovieGenres() throws ClassNotFoundException, SQLException, FileNotFoundException, IOException
+    {
+        BufferedReader br = new BufferedReader(new FileReader("Rotten Tomatos Dataset/movie_genres.dat"));
+        Class.forName("com.mysql.cj.jdbc.Driver");
+        Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/Movie_Matcher?serverTimezone="
+                + TimeZone.getDefault().getID(),"root", "assassass1");
+        Statement makeTable = con.createStatement();
+        String createMovieGenreTable = "CREATE TABLE MOVIE_GENRE" +
+                "(movieId int not null,"+
+                "genre varchar(50),"+
+                "foreign key (movieId) references Movie(id))";
+        makeTable.executeUpdate(createMovieGenreTable);
+        makeTable.close();
+        PreparedStatement insertMovieGenreList = con.prepareStatement("INSERT INTO MOVIE_GENRE (movieId, genre)"+
+                "VALUES (?, ?)");
+        br.readLine();
+        String line;
+        int movieId;
+        String genre;
+        while ((line = br.readLine()) != null) {
+            String[] tokens = line.split("\t");
+            movieId = Integer.parseInt(tokens[0]);
+            genre = tokens[1];
+            insertMovieGenreList.setInt(1,movieId);
+            insertMovieGenreList.setString(2,genre);
+            insertMovieGenreList.executeUpdate();
+        }
+        insertMovieGenreList.close();
+    }
+    public static void populateTags() throws ClassNotFoundException, SQLException, FileNotFoundException, IOException
+    {
+        BufferedReader br = new BufferedReader(new FileReader("Rotten Tomatos Dataset/tags.dat"));
+        Class.forName("com.mysql.cj.jdbc.Driver");
+        Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/Movie_Matcher?serverTimezone="
+                + TimeZone.getDefault().getID(),"root", "assassass1");
+        Statement makeTable = con.createStatement();
+        String createMovieTagsTable = "CREATE TABLE MOVIE_TAG_LIST" +
+                "(id int not null,"+
+                "tag varchar(50),"+
+                "primary key (id))";
+        makeTable.executeUpdate(createMovieTagsTable);
+        makeTable.close();
+        PreparedStatement insertMovieTagsList = con.prepareStatement("INSERT INTO MOVIE_TAG_LIST (id, tag)"+
+                "VALUES (?, ?)");
+        br.readLine();
+        String line;
+        int id;
+        String tag;
+        while ((line = br.readLine()) != null)
+        {
+            String[] tokens = line.split("\t");
+            id = Integer.parseInt(tokens[0]);
+            tag = tokens[1];
+            insertMovieTagsList.setInt(1,id);
+            insertMovieTagsList.setString(2,tag);
+            insertMovieTagsList.executeUpdate();
+        }
+        insertMovieTagsList.close();
+    }
+
     public static void populateMovieTags() throws ClassNotFoundException, SQLException, FileNotFoundException, IOException
     {
         BufferedReader br = new BufferedReader(new FileReader("Rotten Tomatos Dataset/movie_tags.dat"));
@@ -21,7 +121,8 @@ public class PickerRunner {
                 "(movieId int,"+
                 "tagId int,"+
                 "tagWeight int,"+
-                "foreign key  (movieId) references Movie(id))";
+                "foreign key  (movieId) references Movie(id),"+
+                "foreign key (tagId) references MOVIE_TAG_LIST(id))";
         makeTable.executeUpdate(createMovieTagsTable);
         makeTable.close();
         PreparedStatement insertMovieTags = con.prepareStatement("INSERT INTO MOVIE_TAG (movieId, tagId, tagWeight)"+
