@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.TilePane?>
+<?import javafx.scene.text.Font?>
+
+<GridPane alignment="center" hgap="10" vgap="10" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.172-ea" fx:controller="Movie_Matcher.Controller">
+    <AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="450.0" prefWidth="682.0" xmlns="http://javafx.com/javafx/2.2" xmlns:fx="http://javafx.com/fxml/1">
+        <children>
+            <TabPane layoutX="0.0" layoutY="0.0" prefHeight="450.0" prefWidth="682.0" tabClosingPolicy="UNAVAILABLE">
+                <tabs>
+                    <Tab fx:id="home" closable="false" text="Home">
+                        <content>
+                            <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                <children>
+                                    <SplitPane dividerPositions="0.23366834170854273" focusTraversable="true" layoutX="31.0" layoutY="10.0" orientation="VERTICAL" prefHeight="400.0" prefWidth="621.0">
+                                        <items>
+                                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="194.0" prefWidth="619.0">
+                                                <children>
+                                                    <Button fx:id="actorBtn" layoutX="339.0" layoutY="57.0" mnemonicParsing="false" text="Actors" textAlignment="CENTER" />
+                                                    <Button fx:id="directorBtn" layoutX="404.0" layoutY="57.0" mnemonicParsing="false" text="Directors" textAlignment="CENTER" />
+                                                    <Button fx:id="movieBtn" layoutX="481.0" layoutY="57.0" mnemonicParsing="false" text="Movies" textAlignment="CENTER" />
+                                                    <Button fx:id="tagBtn" layoutX="225.0" layoutY="14.0" mnemonicParsing="false" onAction="#test" text="Search" />
+                                                    <TextField layoutX="14.0" layoutY="14.0" prefWidth="200.0" promptText="Search by tags seperated by commas" />
+                                                    <Button fx:id="userBtn" layoutX="114.0" layoutY="53.0" mnemonicParsing="false" text="Search" />
+                                                    <TextField layoutX="13.0" layoutY="52.0" prefWidth="87.0" promptText="Search by user ID" />
+                                                    <Label layoutX="281.0" layoutY="59.0" minHeight="18.0" prefHeight="18.0" prefWidth="58.0" text="See Top" textAlignment="CENTER">
+                                                        <font>
+                                                            <Font name="Bauhaus 93" size="15.0" />
+                                                        </font>
+                                                    </Label>
+                                                    <Label layoutX="447.0" layoutY="10.0" text="Movie Matcher">
+                                                        <font>
+                                                            <Font name="Bauhaus 93" size="24.0" />
+                                                        </font>
+                                                    </Label>
+                                                </children>
+                                            </AnchorPane>
+                                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+                                                <children>
+                                                    <TableView fx:id="table" editable="false" layoutX="14.0" layoutY="14.0" prefHeight="274.0" prefWidth="601.0" tableMenuButtonVisible="false">
+                                                        <columns>
+                                                            <TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="218.0" text="Name" />
+                                                            <TableColumn prefWidth="75.0" text="IMDB Score" />
+                                                            <TableColumn prefWidth="75.0" text="RT Score" />
+                                                            <TableColumn prefWidth="75.0" text="Year" />
+                                                            <TableColumn maxWidth="5000.0" minWidth="10.0" prefWidth="157.0" text="Director" />
+                                                        </columns>
+                                                    </TableView>
+                                                </children>
+                                            </AnchorPane>
+                                        </items>
+                                    </SplitPane>
+                                </children>
+                            </AnchorPane>
+                        </content>
+                    </Tab>
+                    <Tab closable="false" text="Movie">
+                        <content>
+                            <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                <children>
+                                    <TilePane id="movieImage" layoutX="443.0" layoutY="22.0" prefHeight="178.0" prefWidth="174.0" />
+                                    <Label id="movieTItle" fx:id="movieTitle" layoutX="24.0" layoutY="14.0" prefHeight="59.0" prefWidth="175.0" text="Label" textAlignment="CENTER" underline="true">
+                                        <font>
+                                            <Font size="24.0" />
+                                        </font>
+                                    </Label>
+                                    <Label layoutX="24.0" layoutY="115.0" text="Rotten Tomatoes">
+                                        <font>
+                                            <Font size="15.0" fx:id="x1" />
+                                        </font>
+                                    </Label>
+                                    <TilePane id="movieImage" layoutX="443.0" layoutY="211.0" prefHeight="194.0" prefWidth="174.0" />
+                                    <Label font="$x1" layoutX="24.0" layoutY="147.0" text="IMDB" />
+                                    <Label font="$x1" layoutX="34.0" layoutY="273.0" text="Tags" />
+                                    <Separator layoutX="12.0" layoutY="144.0" prefWidth="200.0" />
+                                    <Separator layoutX="430.0" layoutY="200.0" prefWidth="200.0" />
+                                    <TextArea fx:id="tags" editable="false" layoutX="81.0" layoutY="235.0" prefWidth="200.0" wrapText="true" />
+                                </children>
+                            </AnchorPane>
+                        </content>
+                    </Tab>
+                    <Tab closable="false" text="User">
+                        <content>
+                            <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                <children>
+                                    <Label layoutX="20.0" layoutY="23.0" text="ID" />
+                                </children>
+                            </AnchorPane>
+                        </content>
+                    </Tab>
+                </tabs>
+            </TabPane>
+        </children>
+    </AnchorPane>
+   <columnConstraints>
+      <ColumnConstraints />
+   </columnConstraints>
+   <rowConstraints>
+      <RowConstraints />
+   </rowConstraints>
+</GridPane>
