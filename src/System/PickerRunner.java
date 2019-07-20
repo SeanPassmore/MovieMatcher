@@ -1,64 +1,207 @@
 package System;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.rmi.server.ExportException;
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.TimeZone;
-import java.util.Timer;
+import java.util.concurrent.*;
 
 public class PickerRunner {
-    public static void main(String args[]) throws ClassNotFoundException, SQLException, FileNotFoundException, IOException
+    static Semaphore sem = new Semaphore(7);
+    public static void main(String args[]) throws Exception, ClassNotFoundException, SQLException, FileNotFoundException, IOException
     {
-        populateAll();
+        setupDB();
     }
-    public static void populateAll() throws ClassNotFoundException, SQLException, FileNotFoundException, IOException
-    {
-        long start = 0;
-        long finish = 0;
-        long total = 0;
-        System.out.println("Starting connection...");
-        System.out.println("Creating and Populating movie table...");
-        start = System.currentTimeMillis();
-        populateMovies();
-        finish = System.currentTimeMillis();
-        total += (finish-start);
-        System.out.println("Populating Movie table done in "+(finish-start)/1000.00+" seconds.");
-        System.out.println("Populating Movie Director table.");
-        start = System.currentTimeMillis();
-        populateMovieDirectors();
-        finish = System.currentTimeMillis();
-        total += (finish-start);
-        System.out.println("Populating Movie Director table done in "+(finish-start)/1000.00+" seconds.");
-        System.out.println("Populating Tag table.");
-        start = System.currentTimeMillis();
-        populateTags();
-        finish = System.currentTimeMillis();
-        total += (finish-start);
-        System.out.println("Populating Tag table done in "+(finish-start)/1000.00+" seconds.");
-        System.out.println("Populating Movie Tags table.");
-        start = System.currentTimeMillis();
-        populateMovieTags();
-        finish = System.currentTimeMillis();
-        total += (finish-start);
-        System.out.println("Populating Movie Tag table done in "+(finish-start)/1000.00+" seconds.");
-        System.out.println("Populating Movie Genre table.");
-        start = System.currentTimeMillis();
-        populateMovieGenres();
-        finish = System.currentTimeMillis();
-        total += (finish-start);
-        System.out.println("Populating Movie Genre table done in "+(finish-start)/1000.00+" seconds.");
-        System.out.println("Populating Movie Actor table.");
-        start = System.currentTimeMillis();
-        populateMovieActors();
-        finish = System.currentTimeMillis();
-        total += (finish-start);
-        System.out.println("Populating Movie Actor table done in "+(finish-start)/1000.00+" seconds.");
-        System.out.println("Populating User Ratings table.");
-        start = System.currentTimeMillis();
-        populateUserRatings();
-        finish = System.currentTimeMillis();
-        total += (finish-start);
-        System.out.println("Populating User Ratings table done in "+(finish-start)/1000.00+" seconds.");
-        System.out.println("Total time for import and creation "+total/1000.00+" seconds.");
-        System.out.println("Closing connection.");
+    public static void setupDB() throws InterruptedException, ExecutionException {
+        Thread thread = new Thread(new Runnable() {
+            long start = 0;
+            long finish = 0;
+            public void run() {
+                try {
+                    start = System.currentTimeMillis();
+                    System.out.println(sem.availablePermits());
+                    sem.acquire(7);
+                    populateAll();
+                } catch (Exception e) {
+                    System.out.println(e);
+                }
+                finish = System.currentTimeMillis();
+                System.out.println("Finished in "+(double)(finish-start)/1000+" seconds");
+            }
+        });
+        Thread thread2 = new Thread(new Runnable() {
+            public void run() {
+                try {
+                    sem.acquire(14);
+                    addFKConstraints();
+                } catch (Exception e) {
+                    System.out.println(e);
+                }
+
+            }
+        });
+        thread.start();
+        thread2.start();
+    }
+    public static void populateAll(){
+            System.out.println("Starting connection...");
+            Thread thread = new Thread(new Runnable() {
+                public void run() {
+                    long start = 0;
+                    long finish = 0;
+                    try {
+                        System.out.println("Populating Movie table...");
+                        start = System.currentTimeMillis();
+                        populateMovies();
+                    } catch (Exception e) {
+                        System.out.println(e);
+                    }
+                    finish = System.currentTimeMillis();
+                    System.out.println("Populating Movie table done in " + (finish - start) / 1000.00 + " seconds.");
+                    sem.release(2);
+                    System.out.println("Current Permit Amount: "+sem.availablePermits());
+                }
+            });
+            thread.start();
+
+
+            Thread thread2 = new Thread(new Runnable() {
+                public void run() {
+                    long start = 0;
+                    long finish = 0;
+                    try {
+                        System.out.println("Populating Movie Director table.");
+                        start = System.currentTimeMillis();
+                        populateMovieDirectors();
+                    } catch (Exception e) {
+                        System.out.println(e);
+                    }
+                    finish = System.currentTimeMillis();
+                    System.out.println("Populating Movie Director table done in " + ((finish - start) / 1000.00) + " seconds.");
+                    sem.release(2);
+                    System.out.println("Current Permit Amount: "+sem.availablePermits());
+
+                }
+            });
+            thread2.start();
+
+            Thread thread3 = new Thread(new Runnable() {
+                public void run() {
+                    long start = 0;
+                    long finish = 0;
+                    try {
+                        System.out.println("Populating Tags Director table.");
+                        start = System.currentTimeMillis();
+                        populateTags();
+                    } catch (Exception e) {
+                        System.out.println(e);
+                    }
+                    finish = System.currentTimeMillis();
+                    System.out.println("Populating Tags table done in " + ((finish - start) / 1000.00) + " seconds.");
+                    sem.release(2);
+                    System.out.println("Current Permit Amount: "+sem.availablePermits());
+                }
+            });
+            thread3.start();
+
+            Thread thread4 = new Thread(new Runnable() {
+                public void run() {
+                    long start = 0;
+                    long finish = 0;
+                    try {
+                        start = System.currentTimeMillis();
+                        System.out.println("Populating Movie Tags table.");
+                        populateMovieTags();
+                    } catch (Exception e) {
+                        System.out.println(e);
+                    }
+                    finish = System.currentTimeMillis();
+                    System.out.println("Populating Movie Tags table done in " + ((finish - start) / 1000.00) + " seconds.");
+                    sem.release(2);
+                    System.out.println("Current Permit Amount: "+sem.availablePermits());
+                }
+            });
+            thread4.start();
+
+            Thread thread5 = new Thread(new Runnable() {
+                public void run() {
+                    long start = 0;
+                    long finish = 0;
+                    try {
+                        start = System.currentTimeMillis();
+                        System.out.println("Populating Movie Genres table.");
+                        populateMovieGenres();
+                    } catch (Exception e) {
+                        System.out.println(e);
+                    }
+                    finish = System.currentTimeMillis();
+                    System.out.println("Populating Movie Genres table done in " + ((finish - start) / 1000.00) + " seconds.");
+                    sem.release(2);
+                    System.out.println("Current Permit Amount: "+sem.availablePermits());
+                }
+            });
+            thread5.start();
+
+            Thread thread6 = new Thread(new Runnable() {
+                public void run() {
+                    long start = 0;
+                    long finish = 0;
+                    try {
+                        start = System.currentTimeMillis();
+                        System.out.println("Populating Movie Actors table.");
+                        populateMovieActors();
+                    } catch (Exception e) {
+                        System.out.println(e);
+                    }
+                    finish = System.currentTimeMillis();
+                    System.out.println("Populating Movie Actors table done in " + ((finish - start) / 1000.00)/60 + " minutes.");
+                    sem.release(2);
+                    System.out.println("Current Permit Amount: "+sem.availablePermits());
+                }
+            });
+            thread6.start();
+
+            Thread thread7 = new Thread(new Runnable() {
+                public void run() {
+                    long start = 0;
+                    long finish = 0;
+                    try {
+                        start = System.currentTimeMillis();
+                        System.out.println("Populating User Ratings table.");
+                        populateUserRatings();
+                    } catch (Exception e) {
+                        System.out.println(e);
+                    }
+                    finish = System.currentTimeMillis();
+                    System.out.println("Populating User Ratings table done in " + ((finish - start) / 1000.00)/60 + " minutes.");
+                    sem.release(2);
+                    System.out.println("Current Permit Amount: "+sem.availablePermits());
+                    System.out.println("Closing connection.");
+                }
+            });
+            thread7.start();
+
+    }
+    public static void addFKConstraints() throws ClassNotFoundException, SQLException, FileNotFoundException, IOException{
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/Movie_Matcher?serverTimezone="
+                    + TimeZone.getDefault().getID(), "root", "assassass1");
+            Statement makeTable = con.createStatement();
+            ArrayList<String> sqlAlters = new ArrayList<String>();
+            sqlAlters.add("ALTER TABLE MOVIE_USER_RATINGS ADD FOREIGN KEY(movieId) references Movie(id)");
+            sqlAlters.add("ALTER TABLE MOVIE_ACTOR ADD FOREIGN KEY(movieId) references Movie(id)");
+            sqlAlters.add("ALTER TABLE MOVIE_GENRE ADD FOREIGN KEY(movieId) references Movie(id)");
+            sqlAlters.add("ALTER TABLE MOVIE_TAG ADD FOREIGN KEY(movieId) references Movie(id)");
+            sqlAlters.add("ALTER TABLE MOVIE_TAG ADD FOREIGN KEY(tagId) references MOVIE_TAG_LIST(id)");
+            sqlAlters.add("ALTER TABLE MOVIE_DIRECTOR ADD FOREIGN KEY(movieId) references Movie(id)");
+            for(String addFKs : sqlAlters) {
+                makeTable.executeUpdate(addFKs);
+            }
+            makeTable.close();
+            con.close();
     }
     public static void populateUserRatings() throws ClassNotFoundException, SQLException, FileNotFoundException, IOException
     {
@@ -76,8 +219,7 @@ public class PickerRunner {
                 "dateYear int,"+
                 "dateHour int,"+
                 "dateMinute int,"+
-                "dateSecond int,"+
-                "foreign key (movieId) references Movie(id))";
+                "dateSecond int)";
         makeTable.executeUpdate(createMovieActorTable);
         makeTable.close();
         PreparedStatement insertMovieUserRating = con.prepareStatement("INSERT INTO MOVIE_USER_RATINGS (userId,movieId, " +
@@ -85,6 +227,7 @@ public class PickerRunner {
                 "VALUES (?, ?, ?, ?, ? ,? ,? ,? ,?)");
         String line;
         br.readLine();
+        ArrayList<PreparedStatement> statements = new ArrayList<>();
         while ((line = br.readLine()) != null) {
             String[] tokens = line.split("\t");
             insertMovieUserRating.setInt(1, Integer.parseInt(tokens[0]));
@@ -96,9 +239,11 @@ public class PickerRunner {
             insertMovieUserRating.setInt(7, Integer.parseInt(tokens[6]));
             insertMovieUserRating.setInt(8, Integer.parseInt(tokens[7]));
             insertMovieUserRating.setInt(9, Integer.parseInt(tokens[8]));
+            statements.add(insertMovieUserRating);
             insertMovieUserRating.executeUpdate();
         }
         insertMovieUserRating.close();
+        con.close();
     }
     public static void populateMovieActors() throws ClassNotFoundException, SQLException, FileNotFoundException, IOException
     {
@@ -111,8 +256,7 @@ public class PickerRunner {
                 "(movieId int not null,"+
                 "actorId varchar(90),"+
                 "actorName varchar(90),"+
-                "ranking int,"+
-                "foreign key (movieId) references Movie(id))";
+                "ranking int)";
         makeTable.executeUpdate(createMovieActorTable);
         makeTable.close();
         PreparedStatement insertMovieActorList = con.prepareStatement("INSERT INTO MOVIE_ACTOR (movieId, actorId, actorName, ranking)"+
@@ -136,6 +280,7 @@ public class PickerRunner {
             insertMovieActorList.executeUpdate();
         }
         insertMovieActorList.close();
+        con.close();
     }
     public static void populateMovieGenres() throws ClassNotFoundException, SQLException, FileNotFoundException, IOException
     {
@@ -146,8 +291,7 @@ public class PickerRunner {
         Statement makeTable = con.createStatement();
         String createMovieGenreTable = "CREATE TABLE MOVIE_GENRE" +
                 "(movieId int not null,"+
-                "genre varchar(50),"+
-                "foreign key (movieId) references Movie(id))";
+                "genre varchar(50))";
         makeTable.executeUpdate(createMovieGenreTable);
         makeTable.close();
         PreparedStatement insertMovieGenreList = con.prepareStatement("INSERT INTO MOVIE_GENRE (movieId, genre)"+
@@ -165,6 +309,7 @@ public class PickerRunner {
             insertMovieGenreList.executeUpdate();
         }
         insertMovieGenreList.close();
+        con.close();
     }
     public static void populateTags() throws ClassNotFoundException, SQLException, FileNotFoundException, IOException
     {
@@ -195,6 +340,7 @@ public class PickerRunner {
             insertMovieTagsList.executeUpdate();
         }
         insertMovieTagsList.close();
+        con.close();
     }
 
     public static void populateMovieTags() throws ClassNotFoundException, SQLException, FileNotFoundException, IOException
@@ -207,9 +353,7 @@ public class PickerRunner {
         String createMovieTagsTable = "CREATE TABLE MOVIE_TAG" +
                 "(movieId int,"+
                 "tagId int,"+
-                "tagWeight int,"+
-                "foreign key  (movieId) references Movie(id),"+
-                "foreign key (tagId) references MOVIE_TAG_LIST(id))";
+                "tagWeight int)";
         makeTable.executeUpdate(createMovieTagsTable);
         makeTable.close();
         PreparedStatement insertMovieTags = con.prepareStatement("INSERT INTO MOVIE_TAG (movieId, tagId, tagWeight)"+
@@ -231,6 +375,7 @@ public class PickerRunner {
             insertMovieTags.executeUpdate();
         }
         insertMovieTags.close();
+        con.close();
     }
     public static void populateMovieDirectors() throws ClassNotFoundException, SQLException, FileNotFoundException, IOException
     {
@@ -243,8 +388,7 @@ public class PickerRunner {
                 "(movieId int not NULL,"+
                 "directorId varchar(50)not NULL,"+
                 "directorName varchar(50),"+
-                "primary key (movieId)," +
-                "foreign key  (movieId) references Movie(id))";
+                "primary key (movieId))";
         makeTable.executeUpdate(createMovieDirectorsTable);
         makeTable.close();
         PreparedStatement insertMovieDirector = con.prepareStatement("INSERT INTO MOVIE_DIRECTOR (movieId, directorId, DirectorName)"+
@@ -266,6 +410,7 @@ public class PickerRunner {
             insertMovieDirector.executeUpdate();
         }
         insertMovieDirector.close();
+        con.close();
     }
     public static void populateMovies() throws ClassNotFoundException, SQLException, FileNotFoundException, IOException
     {
@@ -448,10 +593,7 @@ public class PickerRunner {
             insertMovie.setDouble(20, rtAudienceScore);
             insertMovie.setString(21, rtPictureURL);
             insertMovie.executeUpdate();
-
-
-
-
         }
+        con.close();
     }
 }
