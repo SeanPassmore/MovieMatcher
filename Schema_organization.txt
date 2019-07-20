@@ -1,0 +1,76 @@
+create schema Movie_Matcher;
+
+CREATE TABLE MOVIE_USER_RATINGS(
+	userId int not null,
+    movieId int,
+    rating double,
+    dateDay int,
+    dateMonth int,
+    dateYear int,
+    dateHour int,
+    dateMinute int,
+    dateSecond int,
+    foreign key (movieId) references Movie(id)
+	);
+	
+CREATE TABLE MOVIE_ACTOR(
+    movieId int not null,
+    actorId varchar(90),
+    actorName varchar(90),
+    ranking int,
+    foreign key (movieId) references Movie(id)
+	);
+	
+CREATE TABLE MOVIE_GENRE(
+    movieId int not null,
+    genre varchar(50),
+    foreign key (movieId) references Movie(id)
+	);
+
+CREATE TABLE MOVIE_TAG_LIST(
+	id int not null,
+    tag varchar(50),
+    primary key (id)
+	);
+	
+CREATE TABLE MOVIE_TAG(
+	movieId int,
+    tagId int,
+    tagWeight int,
+	foreign key  (movieId) references Movie(id),
+	foreign key (tagId) references MOVIE_TAG_LIST(id)
+	);
+	
+CREATE TABLE MOVIE_DIRECTOR(
+	movieId int not NULL,
+	directorId varchar(50)not NULL,
+	directorName varchar(50),
+	primary key (movieId),
+	foreign key  (movieId) references Movie(id)
+	);
+	
+CREATE TABLE MOVIE(
+                id integer not NULL,
+	title varchar(300),
+	imdbId integer,
+	spanishTitle varchar(300),
+	imdbPictureURL varchar(200),
+	year integer,
+	rtID varchar(300),
+	rtAllCriticsRating decimal,
+	rtAllCriticsNumReviews integer,
+	rtAllCriticsNumFresh integer,
+	rtAllCriticsNumRotten integer,
+	rtAllCriticsScore decimal,
+	rtTopCriticsRating decimal,
+	rtTopCriticsNumReviews integer,
+	rtTopCriticsNumFresh integer,
+	rtTopCriticsNumRotten integer,
+	rtTopCriticsScore decimal,
+	rtAudienceRating decimal,
+	rtAudienceNumRatings integer,
+	rtAudienceScore integer,
+	rtPictureURL varchar(200),
+	primary key(id)
+	);
+	
