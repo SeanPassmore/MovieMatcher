@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.text.Font?>
+
+<GridPane alignment="CENTER" hgap="10.0" prefHeight="720.0" prefWidth="1280.0" vgap="10.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="Controller">
+  <AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" GridPane.columnIndex="1">
+    <children>
+      <TabPane fx:id="tabPane" layoutX="0.0" layoutY="0.0" prefHeight="720.0" prefWidth="1280.0" tabClosingPolicy="UNAVAILABLE">
+        <tabs>
+          <Tab closable="false" text="Home">
+            <content>
+              <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                <children>
+                  <SplitPane dividerPositions="0.2981220657276995" layoutX="-1.0" layoutY="-1.0" prefHeight="692.0" prefWidth="1280.0">
+                    <items>
+                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+                        <children>
+                          <Label prefHeight="41.0" prefWidth="336.0" text="Movie Matcher" textAlignment="CENTER">
+                            <font>
+                              <Font name="Bauhaus 93" size="24.0" fx:id="x5" />
+                            </font>
+                          </Label>
+                          <TextField fx:id="movieSearch" layoutX="14.0" layoutY="49.0" promptText="Search by Movie" />
+                          <TextField fx:id="actorSearch" layoutX="14.0" layoutY="88.0" promptText="Search by Actor" />
+                          <TextField fx:id="dirSearch" layoutX="14.0" layoutY="127.0" promptText="Search by Director" />
+                          <TextField fx:id="genreSearch" layoutX="14.0" layoutY="168.0" promptText="Search by Genre" />
+                          <Slider fx:id="slider" blockIncrement="1.0" layoutX="79.0" layoutY="311.0" onMouseDragged="#sliderNum" showTickLabels="true" value="10.0" />
+                          <TextField fx:id="tagSearch" layoutX="15.0" layoutY="205.0" promptText="Search by Tag" />
+                          <Label font="$x5" layoutX="52.0" layoutY="345.0" prefHeight="41.0" prefWidth="44.0" text="Top" textAlignment="CENTER" />
+                          <Button fx:id="movieBtn" layoutX="30.0" layoutY="392.0" mnemonicParsing="false" onAction="#topMovies" text="Movies">
+                            <font>
+                              <Font name="Bauhaus 93" size="20.0" fx:id="x2" />
+                            </font>
+                          </Button>
+                          <Button fx:id="directorBtn" font="$x2" layoutX="19.0" layoutY="488.0" mnemonicParsing="false" onAction="#topDir" text="Directors" textAlignment="CENTER" />
+                          <Button fx:id="actorBtn" font="$x2" layoutX="33.0" layoutY="440.0" mnemonicParsing="false" onAction="#topActors" text="Actors" />
+                          <Button fx:id="searchMovie" layoutX="183.0" layoutY="51.0" mnemonicParsing="false" onAction="#movieQuery" prefHeight="22.0" prefWidth="72.0" text="Search" textAlignment="CENTER">
+                            <font>
+                              <Font name="Bauhaus 93" size="11.0" fx:id="x3" />
+                            </font>
+                          </Button>
+                          <Label layoutX="57.0" layoutY="659.0" text="Double click to see more information about a movie" />
+                          <TextField fx:id="userSearch" layoutX="15.0" layoutY="568.0" promptText="Search by USER ID" />
+                          <Button fx:id="searchActor" font="$x3" layoutX="183.0" layoutY="90.0" mnemonicParsing="false" onAction="#actorQuery" prefHeight="22.0" prefWidth="72.0" text="Search" textAlignment="CENTER" />
+                          <Button fx:id="searchDir" font="$x3" layoutX="183.0" layoutY="129.0" mnemonicParsing="false" onAction="#dirQuery" prefHeight="22.0" prefWidth="72.0" text="Search" textAlignment="CENTER" />
+                          <Button fx:id="searchGenre" font="$x3" layoutX="183.0" layoutY="170.0" mnemonicParsing="false" onAction="#genreSearchQuery" prefHeight="22.0" prefWidth="72.0" text="Search" textAlignment="CENTER" />
+                          <Button fx:id="searchTag" font="$x3" layoutX="183.0" layoutY="207.0" mnemonicParsing="false" onAction="#tagQuery" prefHeight="22.0" prefWidth="72.0" text="Search" textAlignment="CENTER" />
+                          <Button fx:id="searchUser" font="$x3" layoutX="183.0" layoutY="570.0" mnemonicParsing="false" prefHeight="22.0" prefWidth="72.0" text="Search" textAlignment="CENTER" />
+                          <Label fx:id="sliderLabel" layoutX="234.0" layoutY="311.0" prefHeight="25.0" prefWidth="31.0" text="10">
+                            <font>
+                              <Font size="14.0" />
+                            </font>
+                          </Label>
+                          <Label font="$x5" layoutX="225.0" layoutY="345.0" prefHeight="41.0" prefWidth="61.0" text="Worst" textAlignment="CENTER" />
+                          <Button fx:id="movieBtn1" font="$x2" layoutX="211.0" layoutY="392.0" mnemonicParsing="false" onAction="#worstMovies" text="Movies" />
+                          <Button fx:id="actorBtn1" font="$x2" layoutX="214.0" layoutY="440.0" mnemonicParsing="false" onAction="#worstActors" text="Actors" />
+                          <Button fx:id="directorBtn1" font="$x2" layoutX="201.0" layoutY="488.0" mnemonicParsing="false" onAction="#worstDir" text="Directors" textAlignment="CENTER" />
+                          <Button fx:id="searchMovie1" font="$x3" layoutX="274.0" layoutY="51.0" mnemonicParsing="false" onAction="#movieQuery" prefHeight="22.0" prefWidth="90.0" text="Search Similar" textAlignment="CENTER" />
+                          <Label layoutX="269.0" layoutY="32.0" text="Title must be exact" />
+                          <Label layoutX="80.0" layoutY="285.0" text="How many results do you want?" />
+                        </children>
+                      </AnchorPane>
+                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+                        <children>
+                          <TableView fx:id="table" editable="false" layoutX="1.0" onMouseClicked="#test" prefHeight="689.0" prefWidth="892.0" tableMenuButtonVisible="false" />
+                        </children>
+                      </AnchorPane>
+                    </items>
+                  </SplitPane>
+                </children>
+              </AnchorPane>
+            </content>
+          </Tab>
+          <Tab closable="false" text="Movie">
+            <content>
+              <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                <children>
+                  <Label fx:id="movieTitle" layoutX="24.0" layoutY="14.0" prefHeight="59.0" prefWidth="406.0" text="Label" textAlignment="CENTER" underline="true" wrapText="false">
+                    <font>
+                      <Font size="24.0" fx:id="x4" />
+                    </font>
+                  </Label>
+                  <Label id="movieTitle" fx:id="yearLabel" font="$x4" layoutX="24.0" layoutY="56.0" prefHeight="59.0" prefWidth="175.0" text="Label" textAlignment="CENTER" underline="true" />
+                  <Label layoutX="24.0" layoutY="115.0" text="Rotten Tomatoes Critics">
+                    <font>
+                      <Font size="15.0" fx:id="x1" />
+                    </font>
+                  </Label>
+                  <Label font="$x1" layoutX="24.0" layoutY="147.0" text="Rotten Tomatoes Audience" />
+                  <Label font="$x1" layoutX="34.0" layoutY="273.0" text="Tags" />
+                  <Separator layoutX="12.0" layoutY="144.0" prefWidth="200.0" />
+                  <Separator layoutX="430.0" layoutY="200.0" prefWidth="200.0" />
+                  <TextArea fx:id="tags" editable="false" layoutX="81.0" layoutY="235.0" prefWidth="200.0" wrapText="true" />
+                  <ImageView fx:id="rtImage" fitHeight="177.0" fitWidth="203.0" layoutX="430.0" layoutY="3.0" pickOnBounds="true" preserveRatio="true" />
+                  <ImageView id="IMDBimgLabel" fx:id="imdbImage" fitHeight="150.0" fitWidth="200.0" layoutX="430.0" layoutY="219.0" pickOnBounds="true" preserveRatio="true" />
+                  <Label fx:id="rtScore" font="$x1" layoutX="212.0" layoutY="115.0" text="score" />
+                  <Label fx:id="imdbScore" font="$x1" layoutX="212.0" layoutY="147.0" text="score" />
+                  <Label fx:id="RTimgLabel" font="$x1" layoutX="465.0" layoutY="115.0" text="Image not available" visible="false" />
+                  <Label fx:id="IMDBimgLabel" font="$x1" layoutX="467.0" layoutY="263.0" text="Image not available" visible="false" />
+                </children>
+              </AnchorPane>
+            </content>
+          </Tab>
+        </tabs>
+      </TabPane>
+    </children>
+  </AnchorPane>
+  <columnConstraints>
+    <ColumnConstraints />
+    <ColumnConstraints />
+  </columnConstraints>
+  <rowConstraints>
+    <RowConstraints />
+  </rowConstraints>
+</GridPane>
