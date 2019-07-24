@@ -75,7 +75,7 @@
                           <Button fx:id="movieBtn1" font="$x2" layoutX="211.0" layoutY="392.0" mnemonicParsing="false" onAction="#worstMovies" text="Movies" />
                           <Button fx:id="actorBtn1" font="$x2" layoutX="214.0" layoutY="440.0" mnemonicParsing="false" onAction="#worstActors" text="Actors" />
                           <Button fx:id="directorBtn1" font="$x2" layoutX="201.0" layoutY="488.0" mnemonicParsing="false" onAction="#worstDir" text="Directors" textAlignment="CENTER" />
-                          <Button fx:id="searchMovie1" font="$x3" layoutX="274.0" layoutY="51.0" mnemonicParsing="false" onAction="#movieQuery" prefHeight="22.0" prefWidth="90.0" text="Search Similar" textAlignment="CENTER" />
+                          <Button fx:id="searchMovie1" font="$x3" layoutX="274.0" layoutY="51.0" mnemonicParsing="false" onAction="#movieSimQuery" prefHeight="22.0" prefWidth="90.0" text="Search Similar" textAlignment="CENTER" />
                           <Label layoutX="269.0" layoutY="32.0" text="Title must be exact" />
                           <Label layoutX="80.0" layoutY="285.0" text="How many results do you want?" />
                         </children>

@@ -251,6 +251,30 @@ public class Controller {
         updateTable(rs);
         ps.close();
     }
+    @FXML protected void  movieSimQuery(ActionEvent event) throws SQLException, ClassNotFoundException{
+        Connection con = setConnection();
+        String sql = "SELECT movieId,title, GROUP_CONCAT(movie_tag_list.tag ORDER BY tag ASC separator ', ') as Tags " +
+       "FROM MOVIE_TAG " +
+       "INNER JOIN Movie " +
+       "ON movie.id = movie_tag.movieId " +
+       "INNER JOIN movie_tag_list " +
+       "ON movie_tag_list.id = tagId " +
+       "WHERE movie_tag.tagId in ( SELECT tagId from MOVIE_TAG " +
+       "INNER JOIN Movie " +
+       "ON movie.id = movie_tag.movieId " +
+       "WHERE movie.title = ?) " +
+       "GROUP BY movieId " +
+       "having count(distinct MOVIE_TAG.tagId) >= (SELECT COUNT(tagId) from MOVIE_TAG " +
+       "       INNER JOIN Movie " +
+       "ON movie.id = movie_tag.movieId  " +
+        "WHERE movie.title = ?)";
+        PreparedStatement ps = con.prepareStatement(sql);
+        ps.setString(1, movieSearch.getText());
+        ps.setString(2, movieSearch.getText());
+        ResultSet rs = ps.executeQuery();
+        updateTable(rs);
+        ps.close();
+    }
 
     @FXML protected void  tagQuery(ActionEvent event) throws SQLException, ClassNotFoundException{
         Connection con = setConnection();
