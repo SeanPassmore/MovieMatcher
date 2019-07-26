@@ -1,0 +1,4 @@
+Sean Passmore- Designed the Data Processing
+Sean Northcutt- Did the SQL statements and helped implement into GUI
+Caleb Pierce- Did the SQL statements and helped implement into GUI
+Andrew Russell- Designed the GUI
