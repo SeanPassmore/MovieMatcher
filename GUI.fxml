@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import java.lang.*?>
+<?import javafx.scene.chart.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
@@ -65,7 +66,7 @@
                           <Button fx:id="searchDir" font="$x3" layoutX="183.0" layoutY="129.0" mnemonicParsing="false" onAction="#dirQuery" prefHeight="22.0" prefWidth="72.0" text="Search" textAlignment="CENTER" />
                           <Button fx:id="searchGenre" font="$x3" layoutX="183.0" layoutY="170.0" mnemonicParsing="false" onAction="#genreSearchQuery" prefHeight="22.0" prefWidth="72.0" text="Search" textAlignment="CENTER" />
                           <Button fx:id="searchTag" font="$x3" layoutX="183.0" layoutY="207.0" mnemonicParsing="false" onAction="#tagQuery" prefHeight="22.0" prefWidth="72.0" text="Search" textAlignment="CENTER" />
-                          <Button fx:id="searchUser" font="$x3" layoutX="183.0" layoutY="570.0" mnemonicParsing="false" prefHeight="22.0" prefWidth="72.0" text="Search" textAlignment="CENTER" />
+                          <Button fx:id="searchUser" font="$x3" layoutX="183.0" layoutY="570.0" mnemonicParsing="false" onAction="#userQuery" prefHeight="22.0" prefWidth="72.0" text="Search" textAlignment="CENTER" />
                           <Label fx:id="sliderLabel" layoutX="234.0" layoutY="311.0" prefHeight="25.0" prefWidth="31.0" text="10">
                             <font>
                               <Font size="14.0" />
@@ -78,6 +79,11 @@
                           <Button fx:id="searchMovie1" font="$x3" layoutX="274.0" layoutY="51.0" mnemonicParsing="false" onAction="#movieSimQuery" prefHeight="22.0" prefWidth="90.0" text="Search Similar" textAlignment="CENTER" />
                           <Label layoutX="269.0" layoutY="32.0" text="Title must be exact" />
                           <Label layoutX="80.0" layoutY="285.0" text="How many results do you want?" />
+                          <Label fx:id="userError" layoutX="15.0" layoutY="600.0" text="Please enter a whole number" textFill="#cc0000" visible="false">
+                            <font>
+                              <Font size="15.0" fx:id="x1" />
+                            </font>
+                          </Label>
                         </children>
                       </AnchorPane>
                       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
@@ -101,11 +107,7 @@
                     </font>
                   </Label>
                   <Label id="movieTitle" fx:id="yearLabel" font="$x4" layoutX="24.0" layoutY="56.0" prefHeight="59.0" prefWidth="175.0" text="Label" textAlignment="CENTER" underline="true" />
-                  <Label layoutX="24.0" layoutY="115.0" text="Rotten Tomatoes Critics">
-                    <font>
-                      <Font size="15.0" fx:id="x1" />
-                    </font>
-                  </Label>
+                  <Label font="$x1" layoutX="24.0" layoutY="115.0" text="Rotten Tomatoes Critics" />
                   <Label font="$x1" layoutX="24.0" layoutY="147.0" text="Rotten Tomatoes Audience" />
                   <Label font="$x1" layoutX="34.0" layoutY="273.0" text="Tags" />
                   <Separator layoutX="12.0" layoutY="144.0" prefWidth="200.0" />
@@ -117,6 +119,27 @@
                   <Label fx:id="imdbScore" font="$x1" layoutX="212.0" layoutY="147.0" text="score" />
                   <Label fx:id="RTimgLabel" font="$x1" layoutX="465.0" layoutY="115.0" text="Image not available" visible="false" />
                   <Label fx:id="IMDBimgLabel" font="$x1" layoutX="467.0" layoutY="263.0" text="Image not available" visible="false" />
+                </children>
+              </AnchorPane>
+            </content>
+          </Tab>
+          <Tab text="User">
+            <content>
+              <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                <children>
+                  <PieChart id="PieChart" fx:id="userChart" layoutX="46.0" layoutY="145.0" prefHeight="516.0" title="Genre Breakdown" />
+                  <TableView fx:id="userTable" layoutX="598.0" layoutY="52.0" prefHeight="595.0" prefWidth="653.0" />
+                  <Label layoutX="46.0" layoutY="38.0" text="User ID:">
+                    <font>
+                      <Font name="Bauhaus 93" size="25.0" fx:id="x6" />
+                    </font>
+                  </Label>
+                  <Label id="userID" fx:id="userIDLbl" font="$x6" layoutX="143.0" layoutY="38.0" text="" />
+                  <Label fx:id="percentPie" layoutX="14.0" layoutY="145.0" prefWidth="203.0" text="User ID:">
+                    <font>
+                      <Font name="Arial" size="20.0" />
+                    </font>
+                  </Label>
                 </children>
               </AnchorPane>
             </content>

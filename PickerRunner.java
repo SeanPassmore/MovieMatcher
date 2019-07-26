@@ -21,7 +21,10 @@ public class PickerRunner {
         scan.close();
         setupDB();
     }
-    public static void setupDB(){
+    public static void setupDB()throws SQLException, ClassNotFoundException{
+        Class.forName("com.mysql.cj.jdbc.Driver");
+        Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/","root", pass);
+        con.createStatement().executeUpdate("create schema IF NOT EXISTS movie_matcher");
         Thread thread = new Thread(new Runnable() {
             long start = 0;
             long finish = 0;
@@ -185,33 +188,35 @@ public class PickerRunner {
             Connection con = setConnection();
             Statement makeTable = con.createStatement();
             ArrayList<String> sqlAlters = new ArrayList<String>();
-            sqlAlters.add("ALTER TABLE MOVIE_USER_RATINGS ADD FOREIGN KEY(movieId) references Movie(id)");
-            sqlAlters.add("ALTER TABLE MOVIE_ACTOR ADD FOREIGN KEY(movieId) references Movie(id)");
-            sqlAlters.add("ALTER TABLE MOVIE_GENRE ADD FOREIGN KEY(movieId) references Movie(id)");
-            sqlAlters.add("ALTER TABLE MOVIE_TAG ADD FOREIGN KEY(movieId) references Movie(id)");
-            sqlAlters.add("ALTER TABLE MOVIE_TAG ADD FOREIGN KEY(tagId) references MOVIE_TAG_LIST(id)");
-            sqlAlters.add("ALTER TABLE MOVIE_DIRECTOR ADD FOREIGN KEY(movieId) references Movie(id)");
+            sqlAlters.add("ALTER TABLE MOVIE_USER_RATINGS ADD FOREIGN KEY(movieId) IF NOT EXISTS references Movie(id)");
+            sqlAlters.add("ALTER TABLE MOVIE_ACTOR ADD FOREIGN KEY(movieId) IF NOT EXISTS references Movie(id)");
+            sqlAlters.add("ALTER TABLE MOVIE_GENRE ADD FOREIGN KEY(movieId) IF NOT EXISTS references Movie(id)");
+            sqlAlters.add("ALTER TABLE MOVIE_TAG ADD FOREIGN KEY(movieId) IF NOT EXISTS references Movie(id)");
+            sqlAlters.add("ALTER TABLE MOVIE_TAG ADD FOREIGN KEY(tagId) IF NOT EXISTS references MOVIE_TAG_LIST(id)");
+            sqlAlters.add("ALTER TABLE MOVIE_DIRECTOR ADD FOREIGN KEY(movieId) IF NOT EXISTS references Movie(id)");
             for(String addFKs : sqlAlters) {
                 makeTable.executeUpdate(addFKs);
             }
             makeTable.close();
             con.close();
+            
     }
     public static void populateUserRatings() throws ClassNotFoundException, SQLException, FileNotFoundException, IOException
     {
-        BufferedReader br = new BufferedReader(new FileReader("src/Movie_Matcher/data/user_ratedmovies.dat"));
+        BufferedReader br = new BufferedReader(new FileReader(new File("data/user_ratedmovies.dat")));
         Connection con = setConnection();
         Statement makeTable = con.createStatement();
-        String createMovieActorTable = "CREATE TABLE MOVIE_USER_RATINGS" +
+        String createMovieActorTable = "CREATE TABLE IF NOT EXISTS MOVIE_USER_RATINGS" +
                 "(userId int not null,"+
-                "movieId int,"+
+                "movieId int  not null,"+
                 "rating double,"+
                 "dateDay int,"+
                 "dateMonth int,"+
                 "dateYear int,"+
                 "dateHour int,"+
                 "dateMinute int,"+
-                "dateSecond int)";
+                "dateSecond int,"+
+                "primary key (userId, movieId))";
         makeTable.executeUpdate(createMovieActorTable);
         makeTable.close();
         PreparedStatement insertMovieUserRating = con.prepareStatement("INSERT INTO MOVIE_USER_RATINGS (userId,movieId, " +
@@ -236,17 +241,20 @@ public class PickerRunner {
         }
         insertMovieUserRating.close();
         con.close();
+        br.close();
+
     }
     public static void populateMovieActors() throws ClassNotFoundException, SQLException, FileNotFoundException, IOException
     {
-        BufferedReader br = new BufferedReader(new FileReader("src/Movie_Matcher/data/movie_actors.dat"));
+        BufferedReader br = new BufferedReader(new FileReader(new File("data/movie_actors.dat")));
         Connection con = setConnection();
         Statement makeTable = con.createStatement();
-        String createMovieActorTable = "CREATE TABLE MOVIE_ACTOR" +
+        String createMovieActorTable = "CREATE TABLE IF NOT EXISTS MOVIE_ACTOR" +
                 "(movieId int not null,"+
-                "actorId varchar(90),"+
+                "actorId varchar(90) not null,"+
                 "actorName varchar(90),"+
-                "ranking int)";
+                "ranking int, "+
+                "primary key(movieId, actorId))";
         makeTable.executeUpdate(createMovieActorTable);
         makeTable.close();
         PreparedStatement insertMovieActorList = con.prepareStatement("INSERT INTO MOVIE_ACTOR (movieId, actorId, actorName, ranking)"+
@@ -271,15 +279,18 @@ public class PickerRunner {
         }
         insertMovieActorList.close();
         con.close();
+        br.close();
+
     }
     public static void populateMovieGenres() throws ClassNotFoundException, SQLException, FileNotFoundException, IOException
     {
-        BufferedReader br = new BufferedReader(new FileReader("src/Movie_Matcher/data/movie_genres.dat"));
+        BufferedReader br = new BufferedReader(new FileReader(new File("data/movie_genres.dat")));
         Connection con = setConnection();
         Statement makeTable = con.createStatement();
-        String createMovieGenreTable = "CREATE TABLE MOVIE_GENRE" +
+        String createMovieGenreTable = "CREATE TABLE IF NOT EXISTS MOVIE_GENRE" +
                 "(movieId int not null,"+
-                "genre varchar(50))";
+                "genre varchar(50)  not null, " +
+                 "primary key (movieId, genre))";
         makeTable.executeUpdate(createMovieGenreTable);
         makeTable.close();
         PreparedStatement insertMovieGenreList = con.prepareStatement("INSERT INTO MOVIE_GENRE (movieId, genre)"+
@@ -298,13 +309,15 @@ public class PickerRunner {
         }
         insertMovieGenreList.close();
         con.close();
+        br.close();
+
     }
     public static void populateTags() throws ClassNotFoundException, SQLException, FileNotFoundException, IOException
     {
-        BufferedReader br = new BufferedReader(new FileReader("src/Movie_Matcher/data/tags.dat"));
+        BufferedReader br = new BufferedReader(new FileReader(new File("data/tags.dat")));
         Connection con = setConnection();
         Statement makeTable = con.createStatement();
-        String createMovieTagsTable = "CREATE TABLE MOVIE_TAG_LIST" +
+        String createMovieTagsTable = "CREATE TABLE IF NOT EXISTS MOVIE_TAG_LIST" +
                 "(id int not null,"+
                 "tag varchar(50),"+
                 "primary key (id))";
@@ -327,17 +340,20 @@ public class PickerRunner {
         }
         insertMovieTagsList.close();
         con.close();
+        br.close();
+
     }
 
     public static void populateMovieTags() throws ClassNotFoundException, SQLException, FileNotFoundException, IOException
     {
-        BufferedReader br = new BufferedReader(new FileReader("src/Movie_Matcher/data/movie_tags.dat"));
+        BufferedReader br = new BufferedReader(new FileReader(new File("data/movie_tags.dat")));
         Connection con = setConnection();
         Statement makeTable = con.createStatement();
-        String createMovieTagsTable = "CREATE TABLE MOVIE_TAG" +
-                "(movieId int,"+
-                "tagId int,"+
-                "tagWeight int)";
+        String createMovieTagsTable = "CREATE TABLE IF NOT EXISTS MOVIE_TAG" +
+                "(movieId int not null,"+
+                "tagId int not null,"+
+                "tagWeight int, "+
+                "primary key(movieId,tagId))";
         makeTable.executeUpdate(createMovieTagsTable);
         makeTable.close();
         PreparedStatement insertMovieTags = con.prepareStatement("INSERT INTO MOVIE_TAG (movieId, tagId, tagWeight)"+
@@ -360,17 +376,19 @@ public class PickerRunner {
         }
         insertMovieTags.close();
         con.close();
+        br.close();
+
     }
     public static void populateMovieDirectors() throws ClassNotFoundException, SQLException, FileNotFoundException, IOException
     {
-        BufferedReader br = new BufferedReader(new FileReader("src/Movie_Matcher/data/movie_directors.dat"));
+        BufferedReader br = new BufferedReader(new FileReader(new File("data/movie_directors.dat")));
         Connection con = setConnection();
         Statement makeTable = con.createStatement();
-        String createMovieDirectorsTable = "CREATE TABLE MOVIE_DIRECTOR" +
+        String createMovieDirectorsTable = "CREATE TABLE IF NOT EXISTS MOVIE_DIRECTOR" +
                 "(movieId int not NULL,"+
                 "directorId varchar(50)not NULL,"+
                 "directorName varchar(50),"+
-                "primary key (movieId))";
+                "primary key (movieId, directorId))";
         makeTable.executeUpdate(createMovieDirectorsTable);
         makeTable.close();
         PreparedStatement insertMovieDirector = con.prepareStatement("INSERT INTO MOVIE_DIRECTOR (movieId, directorId, DirectorName)"+
@@ -393,13 +411,14 @@ public class PickerRunner {
         }
         insertMovieDirector.close();
         con.close();
+        br.close();
     }
     public static void populateMovies() throws ClassNotFoundException, SQLException, FileNotFoundException, IOException
     {
-        BufferedReader br = new BufferedReader(new FileReader("src/Movie_Matcher/data/movies.dat"));
+        BufferedReader br = new BufferedReader(new FileReader(new File("data/movies.dat")));
         Connection con = setConnection();
         Statement makeTable = con.createStatement();
-        String createMovieTable = "CREATE TABLE MOVIE"+
+        String createMovieTable = "CREATE TABLE IF NOT EXISTS MOVIE"+
                 "(id integer not NULL,"+
                 "title varchar(300),"+
                 "imdbId integer,"+
@@ -575,5 +594,7 @@ public class PickerRunner {
             insertMovie.executeUpdate();
         }
         con.close();
+        br.close();
+
     }
 }

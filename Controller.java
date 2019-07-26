@@ -3,11 +3,14 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.chart.PieChart;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
 import javafx.util.Callback;
+import javafx.event.EventHandler;
 
 import java.sql.*;
 import java.util.*;
@@ -17,11 +20,12 @@ public class Controller {
      @FXML private TextArea tags;
      @FXML private ImageView rtImage, imdbImage;
      @FXML private TextField tagSearch, genreSearch, actorSearch, dirSearch, movieSearch, userSearch;
-     @FXML private TableView<ObservableList<String>> table;
+     @FXML private TableView<ObservableList<String>> table, userTable;
      @FXML private TabPane tabPane;
      @FXML private Slider slider;
-     @FXML private Label sliderLabel, RTimgLabel, IMDBimgLabel, movieTitle, rtScore, imdbScore, yearLabel;
+     @FXML private Label percentPie, userError, sliderLabel, RTimgLabel, IMDBimgLabel, movieTitle, rtScore, imdbScore, yearLabel, userIDLbl;
      @FXML private TableColumn<ObservableList<String>, String> column;
+     @FXML private PieChart userChart;
 
     private static Connection setConnection() throws SQLException, ClassNotFoundException {
         Class.forName("com.mysql.cj.jdbc.Driver");
@@ -291,6 +295,97 @@ public class Controller {
         ResultSet rs = ps.executeQuery();
         updateTable(rs);
         ps.close();
+    }
+    @FXML protected void  userQuery(ActionEvent event) throws SQLException, ClassNotFoundException{ 
+        // try {
+            userError.setVisible(false);
+            userTab(userSearch.getText());
+        // } catch (Exception e) {
+        //     userError.setVisible(true);
+        // } 
+    }
+    @FXML protected void userTab(String ID)throws SQLException, ClassNotFoundException{
+        tabPane.getSelectionModel().select(2);
+        userError.setVisible(false);
+        userIDLbl.setText(ID);
+        Connection con = setConnection();
+        String sql = "Select concat(dateMonth,'/', dateDay,'/', dateYear,'  at  ', dateHour,':', dateMinute,':', dateSecond) as Date, movie.title, rating, userId " +
+        "From movie_user_ratings " +
+        "inner join movie " +
+        "on movie.id = movie_user_ratings.movieId " +
+        "where userId = ? " +
+        "group by title " +
+        "order by Date ASC";
+        PreparedStatement ps = con.prepareStatement(sql);
+        ps.setString(1, ID);
+        ResultSet rs = ps.executeQuery();
+        setUserTable(rs);
+        sql = "SELECT distinct S.genre, C.cnt " +
+        "FROM movie_genre  S " +
+        "INNER JOIN (SELECT genre, count(genre) as cnt " +
+        "FROM movie_genre as C " +
+        "INNER JOIN movie_user_ratings " +
+        "ON c.movieID = movie_user_ratings.movieId " +
+        "inner join movie " +
+        "on movie.id = movie_user_ratings.movieId " +
+        "where userId = ? GROUP BY genre) C ON S.genre = C.genre";
+        ps = con.prepareStatement(sql);
+        ps.setString(1, ID);
+        rs = ps.executeQuery();
+        setGenreChart(rs);
+    }
+    @FXML protected void setUserTable(ResultSet rs)throws SQLException, ClassNotFoundException{
+        userTable.getColumns().clear();
+        userTable.getItems().clear();
+        ObservableList<ObservableList<String>> data = FXCollections.observableArrayList();
+        for (int i = 0; i < rs.getMetaData().getColumnCount(); i++) {
+            final int j = i;
+            column = new TableColumn<>(rs.getMetaData().getColumnName(i + 1));
+            column.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().get(j)));
+            userTable.getColumns().add(column);
+        }
+
+        while (rs.next()) {
+            //Iterate Row
+            ObservableList<String> row = FXCollections.observableArrayList();
+            for (int i = 1; i <= rs.getMetaData().getColumnCount(); i++) {
+                //Iterate Column
+                row.add(rs.getString(i));
+            }
+            data.add(row);
+
+        }
+        userTable.setItems(data);
+    }
+    @FXML protected void setGenreChart(ResultSet rs)throws SQLException, ClassNotFoundException{
+        ObservableList<PieChart.Data> data = FXCollections.observableArrayList();
+        while (rs.next()){
+            data.add(new PieChart.Data(rs.getString(1), rs.getInt(2)));
+        }
+        userChart.setData(data);
+        percentPie.setStyle("-fx-font: 24 arial;");
+
+        for (final PieChart.Data pie : userChart.getData()) {
+            pie.getNode().addEventHandler(MouseEvent.MOUSE_PRESSED,
+                e -> {
+                    double total = 0;
+                    for (PieChart.Data d : userChart.getData()) {
+                        total += d.getPieValue();
+                    }
+                    String text = String.format("%.1f%%", 100*pie.getPieValue()/total) ;
+                    percentPie.setText(pie.getName() +":  " +text + "\n Watched: " + pie.getPieValue());
+                 }
+                );
+        }
+        // for (final PieChart.Data pie : userChart.getData()) {
+        //     pie.getNode().addEventHandler(MouseEvent.MOUSE_CLICKED,
+        //         new EventHandler<MouseEvent>() {
+        //             @Override public void handle(MouseEvent e) {
+        //                 System.out.println(Double.toString(pie.getPieValue()) +"\t" + pie.getName());
+        //                 percentPie.setText(pie.getName() +": " + "%");
+        //             }
+        //         });
+        // }
     }
     @FXML protected void sliderNum(MouseEvent event){
         sliderLabel.setText(String.valueOf((int)slider.getValue()));
