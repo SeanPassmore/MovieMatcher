@@ -45,50 +45,56 @@
                           <TextField fx:id="actorSearch" layoutX="14.0" layoutY="88.0" promptText="Search by Actor" />
                           <TextField fx:id="dirSearch" layoutX="14.0" layoutY="127.0" promptText="Search by Director" />
                           <TextField fx:id="genreSearch" layoutX="14.0" layoutY="168.0" promptText="Search by Genre" />
-                          <Slider fx:id="slider" blockIncrement="1.0" layoutX="79.0" layoutY="311.0" onMouseDragged="#sliderNum" showTickLabels="true" value="10.0" />
+                          <Slider fx:id="slider" blockIncrement="1.0" layoutX="79.0" layoutY="336.0" onMouseDragged="#sliderNum" showTickLabels="true" value="10.0" />
                           <TextField fx:id="tagSearch" layoutX="15.0" layoutY="205.0" promptText="Search by Tag" />
-                          <Label font="$x5" layoutX="52.0" layoutY="345.0" prefHeight="41.0" prefWidth="44.0" text="Top" textAlignment="CENTER" />
-                          <Button fx:id="movieBtn" layoutX="30.0" layoutY="392.0" mnemonicParsing="false" onAction="#topMovies" text="Movies">
+                          <Label font="$x5" layoutX="55.0" layoutY="386.0" prefHeight="41.0" prefWidth="44.0" text="Top" textAlignment="CENTER" />
+                          <Button fx:id="movieBtn" layoutX="32.0" layoutY="430.0" mnemonicParsing="false" onAction="#topMovies" text="Movies">
                             <font>
                               <Font name="Bauhaus 93" size="20.0" fx:id="x2" />
                             </font>
                           </Button>
-                          <Button fx:id="directorBtn" font="$x2" layoutX="19.0" layoutY="488.0" mnemonicParsing="false" onAction="#topDir" text="Directors" textAlignment="CENTER" />
-                          <Button fx:id="actorBtn" font="$x2" layoutX="33.0" layoutY="440.0" mnemonicParsing="false" onAction="#topActors" text="Actors" />
+                          <Button fx:id="directorBtn" font="$x2" layoutX="19.0" layoutY="526.0" mnemonicParsing="false" onAction="#topDir" text="Directors" textAlignment="CENTER" />
+                          <Button fx:id="actorBtn" font="$x2" layoutX="35.0" layoutY="478.0" mnemonicParsing="false" onAction="#topActors" text="Actors" />
                           <Button fx:id="searchMovie" layoutX="183.0" layoutY="51.0" mnemonicParsing="false" onAction="#movieQuery" prefHeight="22.0" prefWidth="72.0" text="Search" textAlignment="CENTER">
                             <font>
                               <Font name="Bauhaus 93" size="11.0" fx:id="x3" />
                             </font>
                           </Button>
-                          <Label layoutX="57.0" layoutY="659.0" text="Double click to see more information about a movie" />
-                          <TextField fx:id="userSearch" layoutX="15.0" layoutY="568.0" promptText="Search by USER ID" />
+                          <Label layoutX="51.0" layoutY="660.0" text="Double click to see more information about a movie">
+                            <font>
+                              <Font name="System Bold Italic" size="12.0" />
+                            </font>
+                          </Label>
+                          <TextField fx:id="userSearch" layoutX="15.0" layoutY="240.0" promptText="Search by USER ID" />
                           <Button fx:id="searchActor" font="$x3" layoutX="183.0" layoutY="90.0" mnemonicParsing="false" onAction="#actorQuery" prefHeight="22.0" prefWidth="72.0" text="Search" textAlignment="CENTER" />
                           <Button fx:id="searchDir" font="$x3" layoutX="183.0" layoutY="129.0" mnemonicParsing="false" onAction="#dirQuery" prefHeight="22.0" prefWidth="72.0" text="Search" textAlignment="CENTER" />
                           <Button fx:id="searchGenre" font="$x3" layoutX="183.0" layoutY="170.0" mnemonicParsing="false" onAction="#genreSearchQuery" prefHeight="22.0" prefWidth="72.0" text="Search" textAlignment="CENTER" />
                           <Button fx:id="searchTag" font="$x3" layoutX="183.0" layoutY="207.0" mnemonicParsing="false" onAction="#tagQuery" prefHeight="22.0" prefWidth="72.0" text="Search" textAlignment="CENTER" />
-                          <Button fx:id="searchUser" font="$x3" layoutX="183.0" layoutY="570.0" mnemonicParsing="false" onAction="#userQuery" prefHeight="22.0" prefWidth="72.0" text="Search" textAlignment="CENTER" />
-                          <Label fx:id="sliderLabel" layoutX="234.0" layoutY="311.0" prefHeight="25.0" prefWidth="31.0" text="10">
+                          <Button fx:id="searchUser" font="$x3" layoutX="183.0" layoutY="240.0" mnemonicParsing="false" onAction="#userQuery" prefHeight="22.0" prefWidth="72.0" text="Search" textAlignment="CENTER" />
+                          <Label fx:id="sliderLabel" layoutX="234.0" layoutY="328.0" prefHeight="25.0" prefWidth="31.0" text="10">
                             <font>
                               <Font size="14.0" />
                             </font>
                           </Label>
-                          <Label font="$x5" layoutX="225.0" layoutY="345.0" prefHeight="41.0" prefWidth="61.0" text="Worst" textAlignment="CENTER" />
-                          <Button fx:id="movieBtn1" font="$x2" layoutX="211.0" layoutY="392.0" mnemonicParsing="false" onAction="#worstMovies" text="Movies" />
-                          <Button fx:id="actorBtn1" font="$x2" layoutX="214.0" layoutY="440.0" mnemonicParsing="false" onAction="#worstActors" text="Actors" />
-                          <Button fx:id="directorBtn1" font="$x2" layoutX="201.0" layoutY="488.0" mnemonicParsing="false" onAction="#worstDir" text="Directors" textAlignment="CENTER" />
+                          <Label font="$x5" layoutX="228.0" layoutY="386.0" prefHeight="41.0" prefWidth="61.0" text="Worst" textAlignment="CENTER" />
+                          <Button fx:id="movieBtn1" font="$x2" layoutX="211.0" layoutY="430.0" mnemonicParsing="false" onAction="#worstMovies" text="Movies" />
+                          <Button fx:id="actorBtn1" font="$x2" layoutX="214.0" layoutY="478.0" mnemonicParsing="false" onAction="#worstActors" text="Actors" />
+                          <Button fx:id="directorBtn1" font="$x2" layoutX="204.0" layoutY="526.0" mnemonicParsing="false" onAction="#worstDir" text="Directors" textAlignment="CENTER" />
                           <Button fx:id="searchMovie1" font="$x3" layoutX="274.0" layoutY="51.0" mnemonicParsing="false" onAction="#movieSimQuery" prefHeight="22.0" prefWidth="90.0" text="Search Similar" textAlignment="CENTER" />
                           <Label layoutX="269.0" layoutY="32.0" text="Title must be exact" />
-                          <Label layoutX="80.0" layoutY="285.0" text="How many results do you want?" />
+                          <Label layoutX="79.0" layoutY="312.0" text="How many results do you want?" />
                           <Label fx:id="userError" layoutX="15.0" layoutY="600.0" text="Please enter a whole number" textFill="#cc0000" visible="false">
                             <font>
                               <Font size="15.0" fx:id="x1" />
                             </font>
                           </Label>
+                          <Label layoutX="38.0" layoutY="284.0" text="Use slider on Genre search, and the buttons below" />
+                          <Label layoutX="44.0" layoutY="587.0" prefWidth="244.0" text="Directors and Actors buttons show&#10;Top 10 that appeared in X amount of movies" textAlignment="CENTER" />
                         </children>
                       </AnchorPane>
                       <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
                         <children>
-                          <TableView fx:id="table" editable="false" layoutX="1.0" onMouseClicked="#test" prefHeight="689.0" prefWidth="892.0" tableMenuButtonVisible="false" />
+                          <TableView fx:id="table" editable="false" layoutX="1.0" onMouseClicked="#tableClick" prefHeight="689.0" prefWidth="892.0" tableMenuButtonVisible="false" />
                         </children>
                       </AnchorPane>
                     </items>
@@ -112,7 +118,7 @@
                   <Label font="$x1" layoutX="34.0" layoutY="273.0" text="Tags" />
                   <Separator layoutX="12.0" layoutY="144.0" prefWidth="200.0" />
                   <Separator layoutX="430.0" layoutY="200.0" prefWidth="200.0" />
-                  <TextArea fx:id="tags" editable="false" layoutX="81.0" layoutY="235.0" prefWidth="200.0" wrapText="true" />
+                  <TextArea fx:id="tags" editable="false" layoutX="81.0" layoutY="235.0" prefHeight="203.0" prefWidth="318.0" wrapText="true" />
                   <ImageView fx:id="rtImage" fitHeight="177.0" fitWidth="203.0" layoutX="430.0" layoutY="3.0" pickOnBounds="true" preserveRatio="true" />
                   <ImageView id="IMDBimgLabel" fx:id="imdbImage" fitHeight="150.0" fitWidth="200.0" layoutX="430.0" layoutY="219.0" pickOnBounds="true" preserveRatio="true" />
                   <Label fx:id="rtScore" font="$x1" layoutX="212.0" layoutY="115.0" text="score" />
@@ -128,14 +134,14 @@
               <AnchorPane id="Content" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                 <children>
                   <PieChart id="PieChart" fx:id="userChart" layoutX="46.0" layoutY="145.0" prefHeight="516.0" title="Genre Breakdown" />
-                  <TableView fx:id="userTable" layoutX="598.0" layoutY="52.0" prefHeight="595.0" prefWidth="653.0" />
+                  <TableView fx:id="userTable" layoutX="598.0" layoutY="52.0" onMouseClicked="#tableClick" prefHeight="595.0" prefWidth="653.0" />
                   <Label layoutX="46.0" layoutY="38.0" text="User ID:">
                     <font>
                       <Font name="Bauhaus 93" size="25.0" fx:id="x6" />
                     </font>
                   </Label>
                   <Label id="userID" fx:id="userIDLbl" font="$x6" layoutX="143.0" layoutY="38.0" text="" />
-                  <Label fx:id="percentPie" layoutX="14.0" layoutY="145.0" prefWidth="203.0" text="User ID:">
+                  <Label fx:id="percentPie" layoutX="177.0" layoutY="82.0" prefHeight="63.0" prefWidth="270.0" text="Click a slice to see more" textAlignment="LEFT">
                     <font>
                       <Font name="Arial" size="20.0" />
                     </font>

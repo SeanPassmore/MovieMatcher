@@ -32,8 +32,7 @@ public class Controller {
         return DriverManager.getConnection("jdbc:mysql://localhost:3306/Movie_Matcher?serverTimezone="
                 + TimeZone.getDefault().getID(),"root", PickerRunner.pass);
     }
-    @FXML
-    private void updateTable(ResultSet rs)throws SQLException {
+    @FXML private void updateTable(ResultSet rs)throws SQLException {
         table.getColumns().clear();
         table.getItems().clear();
         ObservableList<ObservableList<String>> data = FXCollections.observableArrayList();
@@ -56,20 +55,20 @@ public class Controller {
         }
         table.setItems(data);
     }
-     @FXML
-     protected void test(MouseEvent event) throws SQLException, ClassNotFoundException {
-         if(event.getClickCount() > 1 && !(table.getColumns().get(0).getText().equals("Num_Movies"))) {
+    @FXML protected void tableClick(MouseEvent event) throws SQLException, ClassNotFoundException {
+        String text = table.getColumns().get(0).getText();
+         if(event.getClickCount() > 1 && !((text.equals("Num_Movies") || (text.equals("directorName")|| (text.equals("actorName")))))) {
              ObservableList<String> row = table.getSelectionModel().getSelectedItem();
              movieTab(row.get(0).toString());
              tabPane.getSelectionModel().select(1);
         }
      }
-     protected void movieTab(String id)throws SQLException, ClassNotFoundException{
+    protected void movieTab(String id)throws SQLException, ClassNotFoundException{
         IMDBimgLabel.setVisible(false);
         RTimgLabel.setVisible(false);
 
         Connection con = setConnection();
-        String sql = "SELECT title, year, rtAudienceScore, rtAllCriticsScore, GROUP_CONCAT(movie_tag_list.tag), rtPictureURL, imdbPictureURL " +
+        String sql = "SELECT title, year, rtAudienceScore, rtAllCriticsScore, GROUP_CONCAT(movie_tag_list.tag SEPARATOR ', '), rtPictureURL, imdbPictureURL " +
                 "FROM movie_matcher.movie " +
                 "INNER JOIN movie_tag " +
                 "ON movie.id = movie_tag.movieId " +
@@ -201,8 +200,8 @@ public class Controller {
         "FROM movie_matcher.movie " +
         "INNER JOIN movie_matcher.movie_genre " +
         "ON movie.id = movie_genre.movieID " +
-        "WHERE movie_genre.genre = ?"+
-        " GROUP BY movie.title " +
+        "WHERE movie_genre.genre = ? "+
+        "GROUP BY movie.title " +
         "ORDER BY rtAllCriticsScore DESC, rtAllCriticsNumReviews DESC " +
         "LIMIT ?";
         PreparedStatement ps = con.prepareStatement(sql);
@@ -218,7 +217,7 @@ public class Controller {
         "FROM movie_actor " +
         "INNER JOIN movie " +
         "ON movie.id = movie_actor.movieId "+
-        "WHERE actorName LIKE ?";
+        "WHERE actorName LIKE ? ORDER BY actorID";
         PreparedStatement ps = con.prepareStatement(sql);
         ps.setString(1, "%" +actorSearch.getText()+ "%");
         ResultSet rs = ps.executeQuery();
@@ -231,7 +230,7 @@ public class Controller {
                 "FROM movie_director " +
                 "INNER JOIN movie " +
                 "ON movie.id = movie_director.movieId " +
-                "WHERE directorName LIKE ?";
+                "WHERE directorName LIKE ? ORDER BY directorID";
         PreparedStatement ps = con.prepareStatement(sql);
         ps.setString(1, "%" +dirSearch.getText() +"%");
         ResultSet rs = ps.executeQuery();
@@ -240,7 +239,7 @@ public class Controller {
     }
     @FXML protected void  movieQuery(ActionEvent event) throws SQLException, ClassNotFoundException{
         Connection con = setConnection();
-        String sql = "SELECT movie.title,year,rtAudienceScore, GROUP_CONCAT(movie_tag_list.tag) AS Tags " +
+        String sql = "SELECT movie.id, movie.title,year,rtAudienceScore, GROUP_CONCAT(movie_tag_list.tag) AS Tags " +
                 "FROM movie " +
                 "INNER JOIN movie_tag " +
                 "ON movie.id = movie_tag.movieId " +
@@ -279,10 +278,9 @@ public class Controller {
         updateTable(rs);
         ps.close();
     }
-
     @FXML protected void  tagQuery(ActionEvent event) throws SQLException, ClassNotFoundException{
         Connection con = setConnection();
-        String sql = "SELECT movie_tag_list.tag, movie.title,year,rtAudienceScore " +
+        String sql = "SELECT movie.id, movie_tag_list.tag, movie.title,year,rtAudienceScore " +
                 "FROM movie " +
                 "INNER JOIN movie_tag " +
                 "ON movie.id = movie_tag.movieId " +
@@ -297,19 +295,16 @@ public class Controller {
         ps.close();
     }
     @FXML protected void  userQuery(ActionEvent event) throws SQLException, ClassNotFoundException{ 
-        // try {
             userError.setVisible(false);
             userTab(userSearch.getText());
-        // } catch (Exception e) {
-        //     userError.setVisible(true);
-        // } 
+
     }
     @FXML protected void userTab(String ID)throws SQLException, ClassNotFoundException{
         tabPane.getSelectionModel().select(2);
         userError.setVisible(false);
         userIDLbl.setText(ID);
         Connection con = setConnection();
-        String sql = "Select concat(dateMonth,'/', dateDay,'/', dateYear,'  at  ', dateHour,':', dateMinute,':', dateSecond) as Date, movie.title, rating, userId " +
+        String sql = "Select concat(dateMonth,'/', dateDay,'/', dateYear,'  at  ', dateHour,':', dateMinute,':', dateSecond) as Date, movie.title, rating " +
         "From movie_user_ratings " +
         "inner join movie " +
         "on movie.id = movie_user_ratings.movieId " +
@@ -326,8 +321,6 @@ public class Controller {
         "FROM movie_genre as C " +
         "INNER JOIN movie_user_ratings " +
         "ON c.movieID = movie_user_ratings.movieId " +
-        "inner join movie " +
-        "on movie.id = movie_user_ratings.movieId " +
         "where userId = ? GROUP BY genre) C ON S.genre = C.genre";
         ps = con.prepareStatement(sql);
         ps.setString(1, ID);
@@ -346,10 +339,8 @@ public class Controller {
         }
 
         while (rs.next()) {
-            //Iterate Row
             ObservableList<String> row = FXCollections.observableArrayList();
             for (int i = 1; i <= rs.getMetaData().getColumnCount(); i++) {
-                //Iterate Column
                 row.add(rs.getString(i));
             }
             data.add(row);
@@ -372,20 +363,11 @@ public class Controller {
                     for (PieChart.Data d : userChart.getData()) {
                         total += d.getPieValue();
                     }
-                    String text = String.format("%.1f%%", 100*pie.getPieValue()/total) ;
-                    percentPie.setText(pie.getName() +":  " +text + "\n Watched: " + pie.getPieValue());
+                    String text = String.format("%.2f%%", 100*pie.getPieValue()/total) ;
+                    percentPie.setText(pie.getName() +":  " +text + "\nWatched: " + (int)pie.getPieValue());
                  }
                 );
         }
-        // for (final PieChart.Data pie : userChart.getData()) {
-        //     pie.getNode().addEventHandler(MouseEvent.MOUSE_CLICKED,
-        //         new EventHandler<MouseEvent>() {
-        //             @Override public void handle(MouseEvent e) {
-        //                 System.out.println(Double.toString(pie.getPieValue()) +"\t" + pie.getName());
-        //                 percentPie.setText(pie.getName() +": " + "%");
-        //             }
-        //         });
-        // }
     }
     @FXML protected void sliderNum(MouseEvent event){
         sliderLabel.setText(String.valueOf((int)slider.getValue()));
