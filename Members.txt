@@ -1,0 +1,4 @@
+Andy R. - Responsible for the GUI and SQL Statement 9
+Sean P. - Responsible for Big Data import/processing and SQL Statement 10
+Sean N. - Responsible for statements 1 - 4
+Caleb P. Responsible for statements 5 - 8
